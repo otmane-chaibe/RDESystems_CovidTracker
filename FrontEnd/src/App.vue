@@ -10,19 +10,18 @@
     <b-form-datepicker id="example-datepicker" v-model="value" class="mb-2"></b-form-datepicker>
  
   </b-navbar>
-  <br></br>
+  <br><br>
   
-  <!-- <b-button-group Horizontal> -->
-    
+ 
     <b-button disabled pill variant="primary">New Cases</b-button>
     <b-button disabled pill :pressed="true" variant="warning">Confirmed Cases</b-button>
     <b-button disabled pill variant="success">Recoveries</b-button>
     <b-button disabled pill variant="danger">Deaths</b-button>
  
-  <!-- </b-button-group> -->
-<br></br>
+ 
+<br><br>
     <l-map :center="[41.818716, -74.184204]"  :zoom="6" style="height: 500px;" :options="mapOptions">
-      <l-choropleth-layer  :data="Countydata" titleKey="name" idKey="Id" :value="value" :extraValues="extraValues" geojsonIdKey="GEO_ID" :geojson="Tristate" :colorScale="colorScale">
+      <l-choropleth-layer  :data="Countydata" titleKey="name" idKey="Id" :value="value" geojsonIdKey="GEO_ID" :geojson="Tristate" :colorScale="colorScale">
         <template slot-scope="props">
           <l-info-control :item="props.currentItem" :unit="props.unit" title="County" placeholder="Hover over a County"/>
           <l-reference-chart title="Covid-19 Dashboard" :colorScale="colorScale" :min="props.min" :max="props.max" position="topright"/>
@@ -110,29 +109,7 @@ export default {
       Countydata,
       Tristate,
       options: labelsArray,
-      //[
-      //   {
-      //     language: 'Javascript',
-      //     libs: [
-      //       { name: 'Vue.js', category: 'Front-end' },
-      //       { name: 'Adonis', category: 'Backend' }
-      //     ]
-      //   },
-      //   {
-      //     language: 'Ruby',
-      //     libs: [
-      //       { name: 'Rails', category: 'Backend' },
-      //       { name: 'Sinatra', category: 'Backend' }
-      //     ]
-      //   },
-      //   {
-      //     language: 'Other',
-      //     libs: [
-      //       { name: 'Laravel', category: 'Backend' },
-      //       { name: 'Phoenix', category: 'Backend' }
-      //     ]
-      //   }
-      // ],
+      
       values: [],
       colorScale: ["e7d090", "e9ae7b", "de7062"],
       value: {
@@ -150,12 +127,9 @@ export default {
           { text: 'New Cases', value: 'NewCases' },
           { text: 'Confirmed Cases', value: 'ConfirmedCases' },
           { text: 'Confirmed Deaths', value: 'ConfirmedDeaths' },
-         // { text: 'Sodium', value: 'sodium' },
+         
         ],
-      // extraValues: [{
-      //   key: "amount_m",
-      //   metric: "% boys"
-      // }],
+     
       mapOptions: {
         attributionControl: false
       },
