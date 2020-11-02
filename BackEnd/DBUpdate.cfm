@@ -23,7 +23,6 @@ task = "statUpdate">
 <cfset triStateArea = "36103, 36059, 34023, 34025, 34029, 34035, 34013, 34039, 34027, 34037, 34019, 42103, 36087, 36079, 34031, 34017, 34003, 36119">
 <cfset countiesInDB = "">
 <cfset csvData = listToArray(finalString,"#Chr(10)#",false,true)>
-
 <cfloop array = #csvData# index="ListItem">
 	<!---	index: 1:date 2:county 3:state 4:fips 5:cases 6:deaths	--->
 	<cfset temp = listToArray(#ListItem#,",",true,true)>
@@ -118,24 +117,15 @@ task = "statUpdate">
 				
 				
 <!---	updating current date stat	--->
-<cfhttp url="https://github.com/nytimes/covid-19-data/blob/master/live/us-counties.csv">
+<cfhttp url="https://raw.githubusercontent.com/nytimes/covid-19-data/master/live/us-counties.csv">
 <cfset startString = cfhttp.filecontent>
-<cfset startTag = FindNoCase('<tbody>', startString)+7>
-<cfset tempString = RemoveChars(StartString,1, startTag)>
-<cfset endTag = FindNoCase("</tbody>", tempString)>
-<cfset finalString = RemoveChars(tempString,endTag-7,len(tempString))>
-<cfset removeTRID = REReplace(finalString,'<tr id="LC[0-9]+" class="js-file-line">',"","all")>
-<cfset removeTDID = REReplace(removeTRID,'<td id="L[0-9]+" class="blob-num js-line-number" data-line-number="[0-9]+"></td>',"","all")>
-<cfset removeTD = replace(removeTDID,"<td>","","all")>
-<cfset CSVdata=listToArray(removeTD,"</tr>",false,true)>
+<cfset startTag = FindNoCase('probable_deaths', startString)+15>
+<cfset finalString = RemoveChars(startString,1, startTag)>
+<cfset CSVdata=listToArray(finalString,"#Chr(10)#",false,true)>
+	<cfoutput>data scraped from the repository to be inserted into the database:</cfoutput>
+	<cfscript>WriteDump(csvData);</cfscript>
 <cfloop array = #CSVdata# index="arrayItem">
-	<cfset temp=listToArray(#arrayItem#,"</td>",true,true)>
-		<!---	the delimiter above does not capture the whitespace before each string. for times sake, I am using trim to remove the white space--->
-		<cfset temp[1] = trim(temp[1])>
-		<cfset temp[2] = trim(temp[2])>
-		<cfset temp[4] = trim(temp[4])>
-		<cfset temp[7] = trim(temp[7])>
-		<cfset temp[8] = trim(temp[8])>
+	<cfset temp=listToArray(#arrayItem#,",",true,true)>
 	<!---	for counties labled "Unknown"	--->
 	<cfif temp[2] neq "Unknown">
 		<!---	if state of current row is in the tri state area	--->
@@ -203,3 +193,6 @@ task = "statUpdate">
 <cfquery datasource="covid-database">
 	#preserveSingleQuotes(currentRecoveriesInsert)#;
 </cfquery>
+			
+<cfoutput>end</cfoutput>
+
