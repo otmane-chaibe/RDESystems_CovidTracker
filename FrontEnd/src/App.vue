@@ -31,7 +31,7 @@
         {{ entry }}
       </b-button>
     </div>
-    <!-- <span>{{ Countydata | pluck(filter) }}</span> -->
+    <span>{{ Countydata | pluck(filter) }}</span>
     
     <br /><br />
 
@@ -138,21 +138,15 @@ import BarChart from "./components/BarChart";
 import PieChart from "@/components/PieChart";
 import Loader from "./components/Loader";
 var amountArray=[];
-var val=[];
+
 Vue.filter("pluck", function (objects, key) {
   
-  return objects.map(function (object, index) {
+  objects.map(function (object, index) {
     amountArray[index]=object[key];
-    return object[key];
   });
   
 });
-Vue.filter("create", function ( key) {
-  val=Countydata.map(function (object) {
-   
-    return object[key];
-  });
-});
+
 function centerLeafletMapOnMarker(map, marker) {
   var latLngs = [marker.getLatLng()];
   var markerBounds = L.latLngBounds(latLngs);
@@ -201,9 +195,6 @@ export default {
       fkey: "Id",
       filterList: [ "ConfirmedCases","Recoveries", "ConfirmedDeaths"],
       filter: "ConfirmedCases",
-      users: [],
-
-      
       values: [],
       colorScale: ["e7d090", "e9ae7b", "de7062"],
      
