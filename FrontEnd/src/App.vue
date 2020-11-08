@@ -127,9 +127,7 @@ import Multiselect from "vue-multiselect";
 Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin);
-import DateRangePicker from "vue2-daterange-picker";
 
-import Datepicker from "vuejs-datepicker";
 import Tristate from "./data/Tristate.json";
 import { Countydata } from "./data/County-data";
 import { LMap } from "vue2-leaflet";
