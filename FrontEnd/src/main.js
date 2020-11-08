@@ -5,7 +5,9 @@ import App from './App'
 
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
+import VMdDateRangePicker from "v-md-date-range-picker";
 
+Vue.use(VMdDateRangePicker);
 Vue.use(Vuetify);
 Vue.config.productionTip = false
 
