@@ -3,7 +3,7 @@ import { Pie } from 'vue-chartjs'
 
 export default {
     extends: Pie,
-    props: ['chartData'],
+    props: ['data'],
     data () {
       return {
         
@@ -17,7 +17,27 @@ export default {
       }
     },
     mounted () {
-      this.renderChart(this.chartData, this.options)
+      this.renderChart(this.data, this.options)
+    },
+    methods:{
+      update(){
+      this.$data._chart.destroy()
+     
+      this.renderChart(this.data, this.options);}
+    },
+  computed: {
+    chartData: function() {
+      return this.data;
     }
+  },
+  watch: {
+    data: function() {
+      this.$data._chart.destroy()
+     
+      this.renderChart(this.data, this.options);
+     
+    }
+  },
+  
   }
 </script>

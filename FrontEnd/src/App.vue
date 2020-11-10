@@ -7,6 +7,7 @@
         <img src="../static/RDE-logo.png" alt="rdelogo" />
       </b-navbar-brand>
       <v-md-date-range-picker></v-md-date-range-picker>
+      <!-- <v-date-picker mode="range" v-model="range" :popover="{placement:'bottom-end'}" /> -->
     </b-navbar>
     <br />
 
@@ -17,12 +18,14 @@
         :item="entry"
         :key="index"
         @click="
+        
           filter = entry;
           active = index;
           value = {
             key: entry,
             metric: entry,
           };
+          changeData();
         "
         :class="{ active: entry == filter }"
         :variant="applyStyle(entry)"
@@ -30,8 +33,10 @@
       >
         {{ entry }}
       </b-button>
+      
     </div>
     <span>{{ Countydata | pluck(filter) }}</span>
+    <span>{{  }}</span>
     
     <br /><br />
 
@@ -71,7 +76,7 @@
     <br />
     <div>
       <label class="typo__label">Tagging</label>
-      <multiselect
+      <!-- <multiselect
         v-model="valueArr"
         tag-placeholder="Add this as new tag"
         placeholder="Search or add a tag"
@@ -79,27 +84,36 @@
         :multiple="true"
         :taggable="true"
         @tag="addTag"
-      ></multiselect>
+      ></multiselect> -->
     </div>
 
     <v-card>
       <v-card-title>
         Covid cases by County
         <v-spacer></v-spacer>
-        <v-text-field
+        <!-- <v-text-field
           v-model="valueArr"
           append-icon="mdi-magnify"
           label="name"
           single-line
           hide-details
-        ></v-text-field>
+          :multiple="true"
+        ></v-text-field> -->
+        <v-select
+              v-model="valueArr"
+              :items="option"
+              attach
+              chips
+              label="name"
+              multiple
+            ></v-select>
       </v-card-title>
       <v-data-table
         :data="Countydata"
         :headers="headers"
         :items="Countydata"
         :search="valueArr"
-        track-by="Id"
+        track-by="County"
         :multiple="true"
       ></v-data-table>
     </v-card>
@@ -109,7 +123,7 @@
 
     <br /><br />
     <label class="typo__label" style="align: center">Pie Chart</label>
-    <pie-chart :chartData="chartData"></pie-chart>
+    <pie-chart :data="chartData"></pie-chart>
   </div>
 </template>
 <script src="https://unpkg.com/vue"></script>
@@ -145,11 +159,7 @@ Vue.filter("pluck", function (objects, key) {
   
 });
 
-function centerLeafletMapOnMarker(map, marker) {
-  var latLngs = [marker.getLatLng()];
-  var markerBounds = L.latLngBounds(latLngs);
-  map.fitBounds(markerBounds);
-}
+
 var filter = "ConfirmedCases";
 var labelsArray = [];
 var StateArray = [];
@@ -175,14 +185,51 @@ export default {
     "l-choropleth-layer": ChoroplethLayer,
     BarChart,
     PieChart,
-    Datepicker,
-    DateRangePicker,
     Multiselect,
     'loading-screen': Loader
   },
   data() {
     return {
-      
+     chartData:{
+        labels: labelsArray,
+        datasets: [
+          {
+            label: "Bar Chart",
+            borderWidth: 1,
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+            ],
+            borderColor: [
+              "rgba(255,99,132,1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+              "rgba(255,99,132,1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+            ],
+            pointBorderColor: "#2554FF",
+            data: amountArray, 
+          },
+        ]
+      }
+    ,
       isLoading: true,
       Countydata,
       Tristate,
@@ -194,13 +241,13 @@ export default {
       filterList: [ "ConfirmedCases","Recoveries", "ConfirmedDeaths"],
       filter: "ConfirmedCases",
       values: [],
-      colorScale: ["e7d090", "e9ae7b", "de7062"],
+      // colorScale: ["e7d090", "e9ae7b", "de7062"],
      
       value: {
-        key: "ConfirmedCases",
-        metric: "ConfirmedCases",
+        key: filter,
+        metric: filter,
       },
-      search: "",
+     // search: "",
       headers: [
         {
           text: "County",
@@ -227,6 +274,7 @@ export default {
     }, 2000)
   },
   methods: {
+
     applyStyle(entry){
 if(entry=="ConfirmedCases"){
   return "warning";
@@ -243,13 +291,61 @@ if(entry=="ConfirmedCases"){
           };
           this.option.push(tag);
           this.valueArr.push(tag);
+    },changeData () {
+      this.chartData= {
+        labels: labelsArray,
+        datasets: [
+          {
+            label: "Bar Chart",
+            borderWidth: 1,
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+            ],
+            borderColor: [
+              "rgba(255,99,132,1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+              "rgba(255,99,132,1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+            ],
+            pointBorderColor: "#2554FF",
+            data: amountArray, 
+          },
+        ]
+      }
+      BarChart.update();
     }
+  
         
   },
   
-
+  watch:{
+    colorScale(){
+     return ["e7d090", "e9ae7b", "de7062"];
+   },
+  },
   computed: {
-   
+   colorScale(){
+     return ["e7d090", "e9ae7b", "de7062"];
+   },
     chartData () {
       return {
         labels: labelsArray,
@@ -290,7 +386,9 @@ if(entry=="ConfirmedCases"){
           },
         ]
       }
+     BarChart.update()
     }
+    
   }
 };
 </script>
@@ -300,7 +398,7 @@ if(entry=="ConfirmedCases"){
 @import "../node_modules/bootstrap/dist/css/bootstrap.css";
 @import "../node_modules/bootstrap-vue/dist/bootstrap-vue.css";
 
-@import "../node_modules/vue2-daterange-picker/dist/vue2-daterange-picker.css";
+/* @import "../node_modules/vue2-daterange-picker/dist/vue2-daterange-picker.css"; */
 body {
   background-color: #ffffff;
   margin-left: 100px;

@@ -1,8 +1,8 @@
 <script>
 import { Bar, mixins } from 'vue-chartjs'
-
+const { reactiveProp } = mixins;
 export default {
-    mixins: [mixins.reactiveData],
+    mixins: [reactiveProp],
     extends: Bar,
     props: ['data'],
     mounted() {
@@ -34,10 +34,15 @@ export default {
         }
       }
     },
-    
+    methods:{
+      update(){
+      this.$data._chart.destroy()
+     
+      this.renderChart(this.data, this.options);}
+    },
   computed: {
     chartData: function() {
-      return this.$data;
+      return this.data;
     }
   },
   watch: {

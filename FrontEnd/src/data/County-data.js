@@ -1,6 +1,7 @@
 export var Countydata = [
   {
-    Id:"0500000US34017",
+      
+      Id:"0500000US34017",
       name: 'Hudson',
       State: "New Jersey",
       Recoveries:21342,
@@ -11,7 +12,7 @@ export var Countydata = [
     
    },{
     Id:"0500000US36005",
-      name: '5 Boroughs',
+      name: 'New York City',
       State: "New York",
       Recoveries:21342,
       ConfirmedCases: 	
