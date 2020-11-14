@@ -46,7 +46,7 @@
       style="height: 500px"
       :options="mapOptions"
     >
-      <l-choropleth-layer
+      <l-choropleth-layer 
  
         :data="Countydata"
         titleKey="name"
@@ -72,46 +72,42 @@
           />
         </template>
       </l-choropleth-layer>
+     
+      
     </l-map>
     <br />
     <div>
       <label class="typo__label">Tagging</label>
-      <!-- <multiselect
+      <multiselect class="name-multiselect"
         v-model="valueArr"
         tag-placeholder="Add this as new tag"
         placeholder="Search or add a tag"
         :options="option"
         :multiple="true"
         :taggable="true"
-        @tag="addTag"
-      ></multiselect> -->
+        @input="addTag(valueArr)"
+        @remove="removeTag(valueArr)"
+       ></multiselect>
     </div>
 
     <v-card>
       <v-card-title>
         Covid cases by County
         <v-spacer></v-spacer>
-        <!-- <v-text-field
-          v-model="valueArr"
-          append-icon="mdi-magnify"
-          label="name"
-          single-line
-          hide-details
-          :multiple="true"
-        ></v-text-field> -->
-        <v-select
-              v-model="valueArr"
-              :items="option"
-              attach
-              chips
-              label="name"
-              multiple
-            ></v-select>
+        
       </v-card-title>
-      <v-data-table
+      <v-data-table v-if="test.length===0"
         :data="Countydata"
         :headers="headers"
         :items="Countydata"
+        :search="valueArr"
+        track-by="County"
+        :multiple="true"
+      ></v-data-table>
+      <v-data-table v-if="test.length>0"
+        :data="test"
+        :headers="headers"
+        :items="test"
         :search="valueArr"
         track-by="County"
         :multiple="true"
@@ -132,7 +128,8 @@
 <script>
 import Vuetify from "vuetify";
 
-import { InfoControl, ReferenceChart, ChoroplethLayer } from "vue-choropleth";
+import { InfoControl, ReferenceChart,ChoroplethLayer } from "vue-choropleth";
+
 import Vue from "vue";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 
@@ -173,8 +170,22 @@ for (var i = 0; i < Countydata.length; i++) {
     amountArray.push(Countydata[i] ? Countydata[i].ConfirmedCases : "");
   }
 }
-
-
+var tagData=[];
+let tags = [];
+var test =  [];
+// [
+//   {
+      
+//       Id:"0500000US34017",
+//       name: 'Hudson',
+//       State: "New Jersey",
+//       Recoveries:21342,
+//       ConfirmedCases: 	
+//       21342,
+//       ConfirmedDeaths: 34
+      
+    
+//     }];
 export default {
   
   name: "app",
@@ -190,6 +201,7 @@ export default {
   },
   data() {
     return {
+     test,
      chartData:{
         labels: labelsArray,
         datasets: [
@@ -241,7 +253,7 @@ export default {
       filterList: [ "ConfirmedCases","Recoveries", "ConfirmedDeaths"],
       filter: "ConfirmedCases",
       values: [],
-      // colorScale: ["e7d090", "e9ae7b", "de7062"],
+      colorScale: ["e7d090", "e9ae7b", "de7062"],
      
       value: {
         key: filter,
@@ -285,13 +297,22 @@ if(entry=="ConfirmedCases"){
 }
     },
     addTag(newTag) {
-          const tag = {
-            name: newTag,
-            code: newTag.substring(0, 2) + Math.floor(Math.random() * 10000000),
-          };
-          this.option.push(tag);
-          this.valueArr.push(tag);
-    },changeData () {
+      console.log('newTag: ', newTag)
+      test = []
+      newTag.forEach((tag) => {
+        let filteredItems = Countydata.filter((obj) => obj.name == tag)
+        if(!this.test.includes(filteredItems[0])){
+          this.test.push(filteredItems[0])
+        }
+      })
+    },
+    removeTag(newTag) {
+      let currentTag = newTag[newTag.length - 1]
+      this.test = test.filter((obj) => obj.name != currentTag)
+      
+    },
+    changeData () {
+      
       this.chartData= {
         labels: labelsArray,
         datasets: [
