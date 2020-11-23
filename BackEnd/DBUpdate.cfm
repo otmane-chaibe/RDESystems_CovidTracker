@@ -1,7 +1,3 @@
-<cfschedule
-action = "run"
-task = "statUpdate">
-	
 <cffile action="read"
 	file="C:/ColdFusion2018/cfusion/wwwroot/Covid App/DBTables.sql"
 	variable="Tables">
@@ -31,16 +27,17 @@ task = "statUpdate">
 	<cfif temp[2] neq "Unknown">
 		<!---	if fips of current row is in the tri state area	--->
 		<cfif #ListContains(triStateArea,temp[4])# || temp[2] eq "New York City">
+		<cfset stateCounty = temp[3] & ":" & temp[2]>
 			<!---	if county has been added to the database already	--->
-			<cfif 0 eq #ListContains(countiesInDB,temp[2])#>
+			<cfif 0 eq #ListContains(countiesInDB,stateCounty)#>
 				<cfif IsDefined("countyInsert")>
-				 	<cfset countyInsert=listAppend(countyInsert,"('#temp[2]#')",",")>
+				 	<cfset countyInsert=listAppend(countyInsert,"('#stateCounty#')",",")>
 				<cfelse>
-					<cfset countyInsert="INSERT INTO Counties (Name) VALUES ('#temp[2]#')">
+					<cfset countyInsert="INSERT INTO Counties (Name) VALUES ('#stateCounty#')">
 				</cfif>
-				<cfset countiesInDB = listAppend(countiesInDB, #temp[2]#)>
+				<cfset countiesInDB = listAppend(countiesInDB, #stateCounty#)>
 			</cfif>
-			<cfset id = ListFind(countiesInDB, temp[2])>
+			<cfset id = ListFind(countiesInDB, stateCounty)>
 				
 			<!---	if cases arent recorded	--->
 			<cfif temp[5] eq "">
@@ -122,17 +119,16 @@ task = "statUpdate">
 <cfset startTag = FindNoCase('probable_deaths', startString)+15>
 <cfset finalString = RemoveChars(startString,1, startTag)>
 <cfset CSVdata=listToArray(finalString,"#Chr(10)#",false,true)>
-	<cfoutput>data scraped from the repository to be inserted into the database:</cfoutput>
-	<cfscript>WriteDump(csvData);</cfscript>
 <cfloop array = #CSVdata# index="arrayItem">
 	<cfset temp=listToArray(#arrayItem#,",",true,true)>
 	<!---	for counties labled "Unknown"	--->
 	<cfif temp[2] neq "Unknown">
 		<!---	if state of current row is in the tri state area	--->
 		<cfif #ListContains(triStateArea,temp[4])# || temp[2] eq "New York City">
+			<cfset stateCounty = temp[3] & ":" & temp[2]>
 			<!---	get county id	--->
 			<cfquery datasource="covid-database" name=countyID>
-				SELECT id FROM Counties WHERE Name ="#temp[2]#";
+				SELECT id FROM Counties WHERE Name ="#stateCounty#";
 			</cfquery>
 			<cfset id = CountyID.id>
 				
