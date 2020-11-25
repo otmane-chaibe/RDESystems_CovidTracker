@@ -133,25 +133,25 @@
 			<cfset id = CountyID.id>
 				
 			<!---	if cases arent recorded	--->
-			<cfif temp[7] eq "">
-			  <cfset temp[7]=0>
+			<cfif temp[5] eq "">
+			  <cfset temp[5]=0>
 			</cfif>
 			<!---	if deaths arent recorded	--->
-			<cfif temp[8] eq "">
-			  <cfset temp[8]=0>
+			<cfif temp[6] eq "">
+			  <cfset temp[6]=0>
 			</cfif>
 			<!---	insert/update Cases entry for current day	--->
 			<cfif IsDefined("currentCasesInsert")>
-				<cfset currentCasesInsert=listAppend(currentCasesInsert,"('#temp[1]#', #id#, #temp[7]#)",",")>
+				<cfset currentCasesInsert=listAppend(currentCasesInsert,"('#temp[1]#', #id#, #temp[5]#)",",")>
 			<cfelse>	<!---	for first entry	--->
-				<cfset currentCasesInsert="INSERT INTO Cases (Date, CountyID, Count) VALUES ('#temp[1]#', #id#, #temp[7]#)">
+				<cfset currentCasesInsert="INSERT INTO Cases (Date, CountyID, Count) VALUES ('#temp[1]#', #id#, #temp[5]#)">
 			</cfif>
 
 			<!---	insert/update Deaths entry for current day	--->
 			<cfif IsDefined("currentDeathsInsert")>
-				<cfset currentDeathsInsert=listAppend(currentDeathsInsert,"('#temp[1]#', #id#, #temp[8]#)",",")>
+				<cfset currentDeathsInsert=listAppend(currentDeathsInsert,"('#temp[1]#', #id#, #temp[6]#)",",")>
 			<cfelse>	<!---	for first entry	--->
-				<cfset currentDeathsInsert="INSERT INTO Deaths (Date, CountyID, Count) VALUES ('#temp[1]#', #id#, #temp[8]#)">
+				<cfset currentDeathsInsert="INSERT INTO Deaths (Date, CountyID, Count) VALUES ('#temp[1]#', #id#, #temp[6]#)">
 			</cfif>
 		</cfif>
 	</cfif>
@@ -191,4 +191,3 @@
 </cfquery>
 			
 <cfoutput>end</cfoutput>
-
