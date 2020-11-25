@@ -188,6 +188,64 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -233,6 +291,9 @@ for (var i = 0; i < test.length; i++) {
 var tagData = [];
 let tags = [];
 
+var ConfirmedCases;
+var Recovery;
+var Deaths;
 /* harmony default export */ __webpack_exports__["default"] = ({
 
   name: "app",
@@ -248,9 +309,12 @@ let tags = [];
   },
   data() {
     return {
+
       isLoading: true,
       colorScale: ["e7d090", "e9ae7b", "de7062"],
-
+      ConfirmedCases: 0,
+      Recovery: 0,
+      Deaths: 0,
       value: {
         key: "CONFIRMEDCASES",
         metric: "CONFIRMEDCASES"
@@ -297,6 +361,7 @@ let tags = [];
   },
   mounted() {
     this.requestData();
+    this.Tristate = __WEBPACK_IMPORTED_MODULE_5__data_Tristate_json___default.a;
   },
   methods: {
     requestData(values) {
@@ -305,6 +370,7 @@ let tags = [];
       var end;
       if (values) {
         today = values[0]._d;
+
         end = values[1]._d;
       } else {
         today = new Date();
@@ -316,11 +382,17 @@ let tags = [];
       var yyyy = today.getFullYear();
 
       today = yyyy + '-' + mm + '-' + dd;
+
       var dd = String(end.getDate()).padStart(2, '0');
       var mm = String(end.getMonth() + 1).padStart(2, '0'); //January is 0!
       var yyyy = end.getFullYear();
       end = yyyy + '-' + mm + '-' + dd;
-      var scrap = '{"between":[ "' + today + '" , "' + end + '" ]}'; //'{"date":"'+today+'"}'
+
+      if (today != end) {
+        var scrap = '{"range":[ "' + today + '" , "' + end + '" ]}';
+      } else {
+        var scrap = '{"date":"' + today + '"}';
+      }
       const url = 'https://d4y3kom4hxs3x.cloudfront.net/rest/controller/APIroutes/stats';
 
       const options = {
@@ -331,16 +403,22 @@ let tags = [];
       fetch(url, options).then(dataWrappedByPromise => dataWrappedByPromise.json()).then(data => {
 
         this.Countydata = data.Response;
-
+        console.log(data.response);
+        this.ConfirmedCases = 0;
+        this.Recovery = 0;
+        this.Deaths = 0;
         for (var i = 0; i < this.Countydata.length; i++) {
           labelsArray[i] = this.Countydata[i].NAME;
-
+          this.ConfirmedCases += this.Countydata[i].CONFIRMEDCASES;
+          this.Recovery += this.Countydata[i].RECOVERIES;
+          this.Deaths += this.Countydata[i].CONFIRMEDDEATHS;
           StateArray[i] = this.Countydata[i].STATE;
           if (filter === "CONFIRMEDCASES") {
 
             amountArray[i] = this.Countydata[i].CONFIRMEDCASES;
           }
         }
+        this.Tristate = __WEBPACK_IMPORTED_MODULE_5__data_Tristate_json___default.a;
         this.changeData();
         setTimeout(() => {
           this.isLoading = false;
@@ -377,6 +455,15 @@ let tags = [];
       this.test = test.filter(obj => obj.NAME != currentTag);
     },
 
+    getCase(entry) {
+      if (entry == "CONFIRMEDCASES") {
+        return "Confirmed Cases";
+      }if (entry == "RECOVERIES") {
+        return "Recoveries";
+      }if (entry == "CONFIRMEDDEATHS") {
+        return "Confirmed Deaths";
+      }
+    },
     changeData() {
 
       if (test.length > 0) {
@@ -404,7 +491,6 @@ let tags = [];
           }]
         };
       }
-      // BarChart.update();
     }
 
   },
@@ -412,19 +498,6 @@ let tags = [];
   computed: {
     propertyComputed() {
       return this.Countydata;
-    },
-    chartData() {
-      return {
-        labels: labelsArray,
-        datasets: [{
-          label: "Bar Chart",
-          borderWidth: 1,
-          backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
-          borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
-          pointBorderColor: "#2554FF",
-          data: amountArray
-        }]
-      };
     }
 
   }
@@ -1055,9 +1128,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "is-loading": _vm.isLoading
     }
-  }), _vm._v(" "), _c('br'), _vm._v(" "), _c('b-navbar', {
+  }), _vm._v(" "), _c('b-navbar', {
     attrs: {
-      "variant": "faded",
+      "variant": "",
       "type": "light"
     }
   }, [_c('b-navbar-brand', {
@@ -1070,21 +1143,21 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "alt": "rdelogo"
     }
   })]), _vm._v(" "), _c('v-md-date-range-picker', {
-    attrs: {
-      "opens": _vm.opens
-    },
+    staticClass: "glyphicon glyphicon-calendar mx-auto date",
     on: {
       "change": _vm.requestData
     }
-  })], 1), _vm._v(" "), _c('br'), _vm._v(" "), _vm._l((_vm.filterList), function(entry, index) {
-    return _c('b-button', {
+  })], 1), _vm._v(" "), _c('br'), _vm._v(" "), _c('div', {
+    staticStyle: {
+      "background-color": "#F6F6F6"
+    }
+  }, [_vm._l((_vm.filterList), function(entry, index) {
+    return _c('button', {
       key: index,
-      class: {
-        active: entry == _vm.filter
-      },
+      class: 'btn text-white btn-' + _vm.applyStyle(entry) + ' custom',
       attrs: {
         "item": entry,
-        "variant": _vm.applyStyle(entry)
+        "type": "button"
       },
       on: {
         "click": function($event) {
@@ -1097,10 +1170,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.changeData();
         }
       }
-    }, [_vm._v("\n        " + _vm._s(entry) + "\n      ")])
+    }, [_vm._v("\n        " + _vm._s(_vm.getCase(entry)) + "\n      ")])
   }), _vm._v(" "), _c('span', [_vm._v(_vm._s(_vm._f("pluck")(_vm.Countydata, _vm.filter)))]), _vm._v(" "), _c('br'), _vm._v(" "), _c('l-map', {
     staticStyle: {
-      "height": "500px"
+      "height": "550px"
     },
     attrs: {
       "center": [41.818716, -74.184204],
@@ -1138,7 +1211,51 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         })]
       }
     }])
-  })], 1), _vm._v(" "), _c('br'), _vm._v(" "), _c('div', {
+  })], 1)], 2), _vm._v(" "), _c('v-app', {
+    attrs: {
+      "id": "inspire"
+    }
+  }, [_c('v-container', [_c('v-row', {
+    attrs: {
+      "justify": "space-around"
+    }
+  }, [_c('v-card', {
+    attrs: {
+      "width": "100%"
+    }
+  }, [_c('v-card-text', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('div', {
+    staticClass: "font-weight-bold ml-8 mb-2"
+  }, [_vm._v("\n              Total\n            ")]), _vm._v(" "), _c('v-timeline', {
+    attrs: {
+      "align-top": "",
+      "dense": ""
+    }
+  }, [_c('v-timeline-item', {
+    attrs: {
+      "color": "#ffc107",
+      "small": ""
+    }
+  }, [_c('div', [_c('div', {
+    staticClass: "font-weight-normal"
+  }, [_c('strong', [_vm._v("Todal Confirmed Cases")])]), _vm._v(" "), _c('div', [_vm._v(_vm._s(_vm.ConfirmedCases))])])]), _vm._v(" "), _c('v-timeline-item', {
+    attrs: {
+      "color": "#28a745",
+      "small": ""
+    }
+  }, [_c('div', [_c('div', {
+    staticClass: "font-weight-normal"
+  }, [_c('strong', [_vm._v("Todal Recoveries")])]), _vm._v(" "), _c('div', [_vm._v(_vm._s(_vm.Recovery))])])]), _vm._v(" "), _c('v-timeline-item', {
+    attrs: {
+      "color": "#dc3545",
+      "small": ""
+    }
+  }, [_c('div', [_c('div', {
+    staticClass: "font-weight-normal"
+  }, [_c('strong', [_vm._v("Todal Deaths")])]), _vm._v(" "), _c('div', [_vm._v(_vm._s(_vm.Deaths))])])])], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c('br'), _vm._v(" "), _c('div', {
     staticClass: "container"
   }, [_c('div', {
     staticClass: "block-buttons"
@@ -1202,25 +1319,25 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "track-by": "County",
       "multiple": true
     }
-  }) : _vm._e()], 1), _vm._v(" "), _c('br'), _c('br'), _vm._v(" "), (_vm.showCharts === true) ? _c('label', {
+  }) : _vm._e()], 1), _vm._v(" "), _c('br'), _c('br'), _vm._v(" "), (_vm.showCharts === true) ? _c('legend', {
     staticClass: "typo__label",
     staticStyle: {
-      "align": "center"
+      "text-align": "center"
     }
   }, [_vm._v("Bar Chart")]) : _vm._e(), _vm._v(" "), (_vm.showCharts === true) ? _c('bar-chart', {
     attrs: {
       "data": _vm.chartData
     }
-  }) : _vm._e(), _vm._v(" "), _c('br'), _c('br'), _vm._v(" "), (_vm.showCharts === true) ? _c('label', {
+  }) : _vm._e(), _vm._v(" "), _c('br'), _c('br'), _vm._v(" "), (_vm.showCharts === true) ? _c('legend', {
     staticClass: "typo__label",
     staticStyle: {
-      "align": "center"
+      "text-align": "center"
     }
   }, [_vm._v("Pie Chart")]) : _vm._e(), _vm._v(" "), (_vm.showCharts === true) ? _c('pie-chart', {
     attrs: {
       "data": _vm.chartData
     }
-  }) : _vm._e()], 2)
+  }) : _vm._e(), _vm._v(" "), _c('br')], 1)], 1)
 },staticRenderFns: []}
 
 /***/ }),
@@ -1233,4 +1350,4 @@ module.exports = {"type":"FeatureCollection","features":[{"type":"Feature","prop
 /***/ })
 
 },[414]);
-//# sourceMappingURL=app.759e131209e65499705a.js.map
+//# sourceMappingURL=app.b0cbe0610269c5084c02.js.map

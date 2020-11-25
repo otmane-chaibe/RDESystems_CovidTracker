@@ -10,15 +10,9 @@
     </b-navbar>
     <br />
     
-<div class="row">
-  <div class="column left" style="background-color:##F6F6F6;">
-    <br>
-    <br>
-    <p  class="p-5 w-5  mb-0   text-warning " style="background-color:#38618C;">Total Confirmed Cases: {{ConfirmedCases}}</p>
-    <p  class="p-5 w-5 mb-0  text-success" style="background-color:#38618C;">Total Recoveries: {{Recovery}} </p>
-    <p  class="p-5 w-5 mb-0   text-danger" style="background-color:#38618C;">Total Confirmed Deaths: {{Deaths}}</p>
-  </div>
-  <div class="column right" style="background-color:#F6F6F6;">
+
+  
+  <div  style="background-color:#F6F6F6;">
     
       <button
         v-for="(entry, index) in filterList"
@@ -82,8 +76,56 @@
       
     </l-map>
   </div>
-</div>
 
+
+<v-app id="inspire">
+    <v-container>
+      <v-row justify="space-around">
+        <v-card width="100%" >
+         
+  
+          <v-card-text align="center">
+            <div class="font-weight-bold ml-8 mb-2">
+              Total
+            </div>
+  
+            <v-timeline
+              align-top
+              dense
+              
+            >
+              <v-timeline-item color="#ffc107" small>
+                <div>
+                  <div class="font-weight-normal">
+                    <strong>Todal Confirmed Cases</strong> 
+                  </div>
+                  <div>{{ConfirmedCases}}</div>
+                </div>
+              </v-timeline-item>
+              <v-timeline-item color="#28a745" small>
+                <div>
+                  <div class="font-weight-normal">
+                    <strong>Todal Recoveries</strong> 
+                  </div>
+                  <div>{{Recovery}}</div>
+                </div>
+              </v-timeline-item>
+              <v-timeline-item color="#dc3545" small>
+                <div>
+                  <div class="font-weight-normal">
+                    <strong>Todal Deaths</strong> 
+                  </div>
+                  <div>{{Deaths}}</div>
+                </div>
+              </v-timeline-item>
+             
+            
+            </v-timeline>
+          </v-card-text>
+        </v-card>
+      </v-row>
+    </v-container>
+  
     <br />
     
    <div class="container">
@@ -141,6 +183,8 @@
     <br /><br />
     <legend class="typo__label" style="text-align: center" v-if="showCharts===true">Pie Chart</legend>
     <pie-chart :data="chartData" v-if="showCharts===true"></pie-chart>
+    <br>
+    </v-app>
   </div>
 </template>
 <script src="https://unpkg.com/vue"></script>
@@ -212,6 +256,7 @@ export default {
   },
   data() {
     return {
+      
       isLoading: true,
       colorScale: ["e7d090", "e9ae7b", "de7062"],
       ConfirmedCases:0,
@@ -346,6 +391,7 @@ export default {
     
     
     this.Countydata=data.Response;
+    console.log(data.response);
     this.ConfirmedCases=0;
     this.Recovery=0;
     this.Deaths=0;
@@ -353,7 +399,7 @@ export default {
       labelsArray[i]=this.Countydata[i].NAME;
       this.ConfirmedCases+=this.Countydata[i].CONFIRMEDCASES;
       this.Recovery+=this.Countydata[i].RECOVERIES;
-      this.Deaths+=this.Countydata[i].RECOVERIES;
+      this.Deaths+=this.Countydata[i].CONFIRMEDDEATHS;
   StateArray[i]=this.Countydata[i].STATE;
   if (filter === "CONFIRMEDCASES") {
     
@@ -417,49 +463,6 @@ if(entry=="CONFIRMEDCASES"){
       }
     },
     changeData () {
-      
-      if(test.length>0){
-        this.chartData= {
-        labels: chartlabelArr,
-        datasets: [
-          {
-            label: "Bar Chart",
-            borderWidth: 1,
-            backgroundColor: [
-              "rgba(255, 99, 132, 0.2)",
-              "rgba(54, 162, 235, 0.2)",
-              "rgba(255, 206, 86, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(153, 102, 255, 0.2)",
-              "rgba(255, 159, 64, 0.2)",
-              "rgba(255, 99, 132, 0.2)",
-              "rgba(54, 162, 235, 0.2)",
-              "rgba(255, 206, 86, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(153, 102, 255, 0.2)",
-              "rgba(255, 159, 64, 0.2)",
-            ],
-            borderColor: [
-              "rgba(255,99,132,1)",
-              "rgba(54, 162, 235, 1)",
-              "rgba(255, 206, 86, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(153, 102, 255, 1)",
-              "rgba(255, 159, 64, 1)",
-              "rgba(255,99,132,1)",
-              "rgba(54, 162, 235, 1)",
-              "rgba(255, 206, 86, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(153, 102, 255, 1)",
-              "rgba(255, 159, 64, 1)",
-            ],
-            pointBorderColor: "#2554FF",
-            data: chartamountArr, 
-          },
-        ]
-      }
-      }
-      else{
       this.chartData= {
         labels: labelsArray,
         datasets: [
@@ -500,7 +503,7 @@ if(entry=="CONFIRMEDCASES"){
           },
         ]
       }
-      }
+    
      
     }
   
@@ -573,19 +576,16 @@ button {
     align-self:center;
 }
 .date{
-    position: absolute;
+ 
     background-color:white;
-    display: inline-block;
-    border-bottom-color: rgba(0, 0, 0, 0.2);
-    position: absolute;
+    
     color: inherit;
     border-radius: 4px;
     width: 500px;
     text-align:center;
-    padding: 4px;
+   
     margin-top: 1px;
-    top: 2px;
-    left: 20px;
+
 }
 
 </style>
