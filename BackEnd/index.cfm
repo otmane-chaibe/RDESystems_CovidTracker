@@ -10,4 +10,4 @@
  startDate="10/12/2020"
  startTime="12:00 AM"
  url="http://localhost:8500/Covid%20App/DBUpdate.cfm"
- interval="14400" />
+ interval="daily" />
