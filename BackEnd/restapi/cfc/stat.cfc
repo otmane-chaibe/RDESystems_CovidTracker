@@ -23,20 +23,43 @@
 	<cfif IsDefined("structform.date")>
 			<cfset queryString  = queryString & "Date = '#structform.date#'">
 	</cfif>
-	
+		
+	<cfif IsDefined("structform.range")>
+			<cfset queryString  = queryString & "(Date = '#structform.range[1]#' OR Date = '#structform.range[2]#')">
+	</cfif>
+		
+	<cfset data = []>
 	<cfquery datasource="covid-database" name ="Cases">
 		SELECT Date,Name,Count FROM Cases INNER JOIN Counties ON Cases.CountyID = Counties.ID #preserveSingleQuotes(queryString)#;
 	</cfquery>	
-	<cfquery datasource="covid-database" name ="Deaths">
+		<cfquery datasource="covid-database" name ="Deaths">
 		SELECT Date,Name,Count FROM Deaths INNER JOIN Counties ON Deaths.CountyID = Counties.ID 
 		#preserveSingleQuotes(queryString)#;
 	</cfquery>	
 	<cfquery datasource="covid-database" name ="Recoveries">
 		SELECT Date,Name,Count FROM Recoveries INNER JOIN Counties ON Recoveries.CountyID = Counties.ID 
 		#preserveSingleQuotes(queryString)#;
-	</cfquery>	
-	<cfset test = []>
-	<cfloop index="i" from="1" to="#Cases.RecordCount#">
+	</cfquery>
+		
+	<cfif IsDefined("structform.range")>
+		<cfloop index="i" from="1" to="#Cases.RecordCount/2#">
+			<cfscript>
+				stateCounty=listToArray(Cases.Name[i],":",false,true);
+				half = Cases.RecordCount/2;
+				row = {
+				  BeginDate:"#Cases.Date[i]#",
+				  EndDate:"#Cases.Date[half + i]#",
+				  State: "#stateCounty[1]#",
+				  Name: "#stateCounty[2]#",
+				  Recoveries: int(#Recoveries.Count[half + i]# - #Recoveries.Count[i]#),
+				  ConfirmedCases: int(#Cases.Count[half + i]# - #Cases.Count[i]#),
+				  ConfirmedDeaths: int(#Deaths.Count[half + i]# - #Deaths.Count[i]#)
+			   };
+				ArrayAppend(data,row,"false");
+			</cfscript>
+		</cfloop>
+	<cfelse>
+		<cfloop index="i" from="1" to="#Cases.RecordCount#">
 		<cfscript>
 			stateCounty=listToArray(Cases.Name[i],":",false,true);
 			row = {
@@ -47,11 +70,14 @@
 			  ConfirmedCases: #Cases.Count[i]#,
 			  ConfirmedDeaths: #Deaths.Count[i]#
 		   };
-			ArrayAppend(test,row,"false");
+			ArrayAppend(data,row,"false");
 		</cfscript>
 	</cfloop>
+		
+		
+	</cfif>
 	
-	<cfset resObj["Response"] = test>
+	<cfset resObj["Response"] = data>
 	<cfset resObj["sql"] = queryString>
     <cfreturn resObj>
   </cffunction>
