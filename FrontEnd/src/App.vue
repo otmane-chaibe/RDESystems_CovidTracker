@@ -71,12 +71,9 @@
             position="topright"
           />
         </template>
-      </l-choropleth-layer>
-     
-      
+      </l-choropleth-layer>      
     </l-map>
   </div>
-
 
 <v-app id="inspire">
     <v-container>
@@ -184,8 +181,18 @@
     <legend class="typo__label" style="text-align: center" v-if="showCharts===true">Pie Chart</legend>
     <pie-chart :data="chartData" v-if="showCharts===true"></pie-chart>
     <br>
+
+  <div class="date-container">Start:  {{ beginDate }} End: {{ endDate }}
+    <v-container>
+      <v-row justify="space-around">
+        <v-card width=100%>
+        </v-card>
+      </v-row>
+    </v-container>
+  </div>
     </v-app>
   </div>
+
 </template>
 <script src="https://unpkg.com/vue"></script>
   <script src="https://unpkg.com/vuejs-datepicker"></script>
@@ -209,6 +216,10 @@ import BarChart from "./components/BarChart";
 
 import PieChart from "@/components/PieChart";
 import Loader from "./components/Loader";
+
+var beginDate = ""
+var endDate = ""
+
 var amountArray=[];
 var Countydata=[];
 Vue.filter("pluck", function (objects, key) {
@@ -255,6 +266,7 @@ export default {
     'loading-screen': Loader
   },
   data() {
+
     return {
       
       isLoading: true,
@@ -389,17 +401,22 @@ export default {
   };
   fetch(url, options).then(dataWrappedByPromise => dataWrappedByPromise.json()).then(data => {
     
-    
+    this.beginDate = today;
+    this.endDate = end;
+
     this.Countydata=data.Response;
     console.log(data.response);
+
     this.ConfirmedCases=0;
     this.Recovery=0;
     this.Deaths=0;
+
     for (var i = 0; i < this.Countydata.length; i++) {
       labelsArray[i]=this.Countydata[i].NAME;
       this.ConfirmedCases+=this.Countydata[i].CONFIRMEDCASES;
       this.Recovery+=this.Countydata[i].RECOVERIES;
       this.Deaths+=this.Countydata[i].CONFIRMEDDEATHS;
+      
   StateArray[i]=this.Countydata[i].STATE;
   if (filter === "CONFIRMEDCASES") {
     
@@ -527,6 +544,7 @@ if(entry=="CONFIRMEDCASES"){
 @import "../node_modules/bootstrap-vue/dist/bootstrap-vue.css";
 
 body {
+  
   background-color: #ffffff;
   margin-left: 100px;
   margin-right: 100px;
