@@ -1,20 +1,31 @@
 <template>
   <div id="app">
     <loading-screen :is-loading="isLoading"></loading-screen>
-    
-    <b-navbar variant="" type="light">
-      <b-navbar-brand href="#">
-        <img src="../static/RDE-logo.png" alt="rdelogo" />
+    <v-container p-0>
+      
+        <v-card width=100% >
+          
+    <b-navbar style="background-color:#4285f4;" variant="black" type="light">
+      <b-navbar-brand>
+        <img  style="height: 60px;width: 60px;" src="../static/RDE-logo1.png" alt="rdelogo" />
       </b-navbar-brand>
-      <v-md-date-range-picker class="glyphicon glyphicon-calendar mx-auto date" @change="requestData"></v-md-date-range-picker>
-    </b-navbar>
-    <br />
-    
-
+      
   
-  <div  style="background-color:#F6F6F6;">
+          <b-navbar-brand class="ml-center">
+      <v-md-date-range-picker style="align:center;" class=" glyphicon glyphicon-calendar p-1 m-0 mx-auto date" @change="requestData"></v-md-date-range-picker>
+      </b-navbar-brand>
+    </b-navbar>
+        </v-card>
+      
+    </v-container>
+  <div>
+    <v-container px-0>
+      <v-row justify="space-around">
+        <v-card width=100% >
+          
     
-      <button
+    <div class="btn-div" >
+          <button
         v-for="(entry, index) in filterList"
         :item="entry"
         :key="index"
@@ -27,6 +38,7 @@
             metric: entry,
           };
           changeData();
+          
         "
         :class="'btn text-white btn-'+applyStyle(entry)+' custom'"
         type="button"
@@ -34,11 +46,11 @@
       >
         {{ getCase(entry) }}
       </button>
-      
+     </div> 
     
     <span>{{ Countydata | pluck(filter) }}</span>
     
-    <br />
+   
 
     <l-map
       :center="[41.818716, -74.184204]"
@@ -53,7 +65,7 @@
         idKey="NAME"
         :value="value"
         geojsonIdKey="Name"
-        :geojson="Tristate"
+        :geojson="geojsonComputed"
         :colorScale="colorScale"
       >
         <template slot-scope="props">
@@ -73,66 +85,69 @@
         </template>
       </l-choropleth-layer>      
     </l-map>
-  </div>
-
-<v-app id="inspire">
-    <v-container>
-      <v-row justify="space-around">
-        <v-card width="100%" >
-         
-  
-          <v-card-text align="center">
-            <div class="font-weight-bold ml-8 mb-2">
-              Total
-            </div>
-  
-            <v-timeline
-              align-top
-              dense
-              
-            >
-              <v-timeline-item color="#ffc107" small>
-                <div>
-                  <div class="font-weight-normal">
-                    <strong>Todal Confirmed Cases</strong> 
-                  </div>
-                  <div>{{ConfirmedCases}}</div>
-                </div>
-              </v-timeline-item>
-              <v-timeline-item color="#28a745" small>
-                <div>
-                  <div class="font-weight-normal">
-                    <strong>Todal Recoveries</strong> 
-                  </div>
-                  <div>{{Recovery}}</div>
-                </div>
-              </v-timeline-item>
-              <v-timeline-item color="#dc3545" small>
-                <div>
-                  <div class="font-weight-normal">
-                    <strong>Todal Deaths</strong> 
-                  </div>
-                  <div>{{Deaths}}</div>
-                </div>
-              </v-timeline-item>
-             
-            
-            </v-timeline>
-          </v-card-text>
         </v-card>
       </v-row>
     </v-container>
+      
+  </div>
+
+
+    <div class="sticky">
+     
+      
+        <v-card>
+          Start:  {{ beginDate }} <br>
+          End: {{ endDate }}
+   
+        </v-card>
+   
+    </div>
+<v-container>
+<v-layout>
   
-    <br />
+    <v-flex xs4  style="padding:5px;">
+      <v-card class="primary" height="100%" >
+        <v-card-text><div>
+                  <div class="font-weight-normal">
+                    <strong style="color:#ffc107;">Total Confirmed Cases</strong> 
+                  </div>
+                  <div>{{ConfirmedCases}}</div>
+                </div></v-card-text>
+      </v-card>
+    </v-flex>
+    <v-flex xs4 style="padding:5px;">
+      <v-card class="primary" height="100%">
+        <v-card-text><div>
+                  <div>
+                    <strong style="color:#28a745;">Total Recoveries</strong> 
+                  </div>
+                  <div>{{Recovery}}</div>
+                </div></v-card-text>
+      </v-card>
+    </v-flex>
+    <v-flex xs4 style="padding:5px;">
+      <v-card  height="100%">
+        <v-card-text><div>
+                  <div class="font-weight-normal">
+                    <strong style="color:#dc3545;">Total Deaths</strong> 
+                  </div>
+                  <div>{{Deaths}}</div>
+                </div></v-card-text>
+      </v-card>
+    </v-flex>
+  </v-layout>
+</v-container>
     
-   <div class="container">
+  <div class="date-container">
+      <v-container p-0 >
+   
 	<div class="block-buttons">
 		<div class="btn-group">
 		<b-button  @click="viewTable();" variant="primary"> Table</b-button>
     <b-button  @click="viewCharts()" variant="secondary"> Charts</b-button>
 		</div>
 	</div>
-</div>
+
     <div>
       
       <multiselect v-if="showTable===true" class="name-multiselect"
@@ -170,32 +185,41 @@
         :multiple="true"
       ></v-data-table>
     </v-card>
-    <br /><br />
-   
-    <legend class="typo__label" style="text-align: center" v-if="showCharts===true">Bar Chart</legend>
-    <bar-chart v-if="showCharts===true" :data="chartData"></bar-chart>
-
     
-
-    <br /><br />
-    <legend class="typo__label" style="text-align: center" v-if="showCharts===true">Pie Chart</legend>
-    <pie-chart :data="chartData" v-if="showCharts===true"></pie-chart>
-    <br>
-
-  <div class="date-container">Start:  {{ beginDate }} End: {{ endDate }}
+      </v-container>
+    </div>
+   
+    <div class="date-container">
     <v-container>
       <v-row justify="space-around">
         <v-card width=100%>
+          <legend class="typo__label" style="text-align: center" v-if="showCharts===true">Bar Chart</legend>
+    <bar-chart v-if="showCharts===true" :data="chartData"></bar-chart>
+
         </v-card>
       </v-row>
     </v-container>
   </div>
-    </v-app>
+
+    
+    <br>
+
+  <div class="date-container">
+    <v-container>
+      <v-row justify="space-around">
+        <v-card width=100%>
+          <legend class="typo__label" style="text-align: center" v-if="showCharts===true">Pie Chart</legend>
+    <pie-chart :data="chartData" v-if="showCharts===true"></pie-chart>
+        </v-card>
+      </v-row>
+    </v-container>
+  </div>
+    
   </div>
 
 </template>
 <script src="https://unpkg.com/vue"></script>
-  <script src="https://unpkg.com/vuejs-datepicker"></script>
+<script src="https://unpkg.com/vuejs-datepicker"></script>
  
 <script>
 import Vuetify from "vuetify";
@@ -210,13 +234,14 @@ Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin);
 
-import Tristate from "./data/Tristate.json";
+//import Tristate from "./data/Tristate.json";
+const Tristate = require('./data/Tristate.json')
 import { LMap } from "vue2-leaflet";
 import BarChart from "./components/BarChart";
 
 import PieChart from "@/components/PieChart";
 import Loader from "./components/Loader";
-
+// import { Countydata } from "./data/County-data";
 var beginDate = ""
 var endDate = ""
 
@@ -224,11 +249,12 @@ var amountArray=[];
 var Countydata=[];
 Vue.filter("pluck", function (objects, key) {
   
-  objects.map(function (object, index) {
-    amountArray[index]=object[key];
+  objects.map(function (item, index) {
+    amountArray[index]=item[key];
   });
   
 });
+
 
 
 var filter = "CONFIRMEDCASES";
@@ -356,8 +382,7 @@ export default {
   },
   mounted () {
     this.requestData();
-    this.Tristate=Tristate;
-
+    
   },
   methods: {
     requestData (values) {
@@ -405,8 +430,6 @@ export default {
     this.endDate = end;
 
     this.Countydata=data.Response;
-    console.log(data.response);
-
     this.ConfirmedCases=0;
     this.Recovery=0;
     this.Deaths=0;
@@ -425,11 +448,11 @@ export default {
   }
   
 }
-this.Tristate=Tristate;
+
 this.changeData();
      setTimeout(() => {
       this.isLoading = false
-    }, 1000)
+    }, 1)
     
 }).catch(err => {
             
@@ -527,12 +550,35 @@ if(entry=="CONFIRMEDCASES"){
         
   },
   
-
+  watch: {
+    geojsonComputed() {
+     if(!localStorage.getItem("Tristate")){
+        localStorage.setItem("Tristate", JSON.stringify(this.Tristate));
+     }
+        
+        console.log(JSON.parse(localStorage.getItem("Tristate")));
+        return JSON.parse(localStorage.getItem("Tristate"));
+        
+     
+      
+    }
+  },
   computed: {
    propertyComputed() {
       return this.Countydata;
       
-    }
+    },
+   geojsonComputed() {
+     if(!localStorage.getItem("Tristate")){
+        localStorage.setItem("Tristate", JSON.stringify(this.Tristate));
+     }
+        
+        console.log(JSON.parse(localStorage.getItem("Tristate")));
+        return JSON.parse(localStorage.getItem("Tristate"));
+        
+     
+      
+    },
     
   }
 };
@@ -545,9 +591,9 @@ if(entry=="CONFIRMEDCASES"){
 
 body {
   
-  background-color: #ffffff;
-  margin-left: 100px;
-  margin-right: 100px;
+  background-color: #F0F8FF;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 .loading-message color white #map {
   background-color: #eee;
@@ -575,35 +621,46 @@ button {
   box-sizing: border-box;
 }
 
-/* Create two unequal columns that floats next to each other */
-.column {
-  float: left;
-  padding: 5x;
-  
-}
 
-.left {
-  width: 25%;
-}
-
-.right {
-  width: 75%;
-}
 .custom {
     width: 170px !important;
     align-self:center;
 }
-.date{
+.mdrp__activator .activator-wrapper .text-field{
+  border-bottom:white;
+  font-size:12;
+  padding-top:4px;
+}
+
+.date  {
  
     background-color:white;
-    
-    color: inherit;
+    color:inherit;
     border-radius: 4px;
-    width: 500px;
+    width: 350px;
     text-align:center;
-   
     margin-top: 1px;
+    padding-left: 100px;
+}
+.container{
+  background-color: #F0F8FF;
+}
+.btn-div{
+  
+  border-radius: 0.5rem;
+  padding: 1rem 0rem;
 
+}
+div.sticky {
+  position: -webkit-sticky;
+  position:sticky;
+  top: 0;
+  float: left;
+  padding: 0px;
+  font-size: 20px;
+  z-index: 10;
+  margin-left: 50px;
+  
 }
 
 </style>

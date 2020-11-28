@@ -246,6 +246,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -264,6 +271,10 @@ __WEBPACK_IMPORTED_MODULE_2_vue__["default"].use(__WEBPACK_IMPORTED_MODULE_3_boo
 
 
 
+
+
+var beginDate = "";
+var endDate = "";
 
 var amountArray = [];
 var Countydata = [];
@@ -308,6 +319,7 @@ var Deaths;
     'loading-screen': __WEBPACK_IMPORTED_MODULE_9__components_Loader___default.a
   },
   data() {
+
     return {
 
       isLoading: true,
@@ -402,16 +414,22 @@ var Deaths;
       };
       fetch(url, options).then(dataWrappedByPromise => dataWrappedByPromise.json()).then(data => {
 
+        this.beginDate = today;
+        this.endDate = end;
+
         this.Countydata = data.Response;
         console.log(data.response);
+
         this.ConfirmedCases = 0;
         this.Recovery = 0;
         this.Deaths = 0;
+
         for (var i = 0; i < this.Countydata.length; i++) {
           labelsArray[i] = this.Countydata[i].NAME;
           this.ConfirmedCases += this.Countydata[i].CONFIRMEDCASES;
           this.Recovery += this.Countydata[i].RECOVERIES;
           this.Deaths += this.Countydata[i].CONFIRMEDDEATHS;
+
           StateArray[i] = this.Countydata[i].STATE;
           if (filter === "CONFIRMEDCASES") {
 
@@ -465,32 +483,17 @@ var Deaths;
       }
     },
     changeData() {
-
-      if (test.length > 0) {
-        this.chartData = {
-          labels: chartlabelArr,
-          datasets: [{
-            label: "Bar Chart",
-            borderWidth: 1,
-            backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
-            borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
-            pointBorderColor: "#2554FF",
-            data: chartamountArr
-          }]
-        };
-      } else {
-        this.chartData = {
-          labels: labelsArray,
-          datasets: [{
-            label: "Bar Chart",
-            borderWidth: 1,
-            backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "Yellow", "Aquamarine", "crimson", "aqua", "salmon", "SlateBlue", "pink", "coral", "LightGreen", "Pink"],
-            borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
-            pointBorderColor: "#2554FF",
-            data: amountArray
-          }]
-        };
-      }
+      this.chartData = {
+        labels: labelsArray,
+        datasets: [{
+          label: "Bar Chart",
+          borderWidth: 1,
+          backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "Yellow", "Aquamarine", "crimson", "aqua", "salmon", "SlateBlue", "pink", "coral", "LightGreen", "Pink"],
+          borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+          pointBorderColor: "#2554FF",
+          data: amountArray
+        }]
+      };
     }
 
   },
@@ -547,17 +550,6 @@ const { reactiveProp } = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["a" /* mixins
       }
     };
   },
-  // methods:{
-  //   update(){
-  //   this.$data._chart.destroy()
-
-  //   this.renderChart(this.data, this.options);}
-  // },
-  // computed: {
-  //   chartData: function() {
-  //     return this.data;
-  //   }
-  // },
   watch: {
     data: function () {
       this.$data._chart.destroy();
@@ -650,17 +642,6 @@ const { reactiveProp } = __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["a" /* mixins
   mounted() {
     this.renderChart(this.data, this.options);
   },
-  //   methods:{
-  //     update(){
-  //     this.$data._chart.destroy()
-
-  //     this.renderChart(this.data, this.options);}
-  //   },
-  // computed: {
-  //   chartData: function() {
-  //     return this.data;
-  //   }
-  // },
   watch: {
     data: function () {
       this.$data._chart.destroy();
@@ -1173,7 +1154,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_vm._v("\n        " + _vm._s(_vm.getCase(entry)) + "\n      ")])
   }), _vm._v(" "), _c('span', [_vm._v(_vm._s(_vm._f("pluck")(_vm.Countydata, _vm.filter)))]), _vm._v(" "), _c('br'), _vm._v(" "), _c('l-map', {
     staticStyle: {
-      "height": "550px"
+      "height": "550px",
+      "z-index": "1"
     },
     attrs: {
       "center": [41.818716, -74.184204],
@@ -1337,7 +1319,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "data": _vm.chartData
     }
-  }) : _vm._e(), _vm._v(" "), _c('br')], 1)], 1)
+  }) : _vm._e(), _vm._v(" "), _c('br'), _vm._v(" "), _c('div', {
+    staticClass: "date-container"
+  }, [_vm._v("Start:  " + _vm._s(_vm.beginDate) + " End: " + _vm._s(_vm.endDate) + "\n    "), _c('v-container', [_c('v-row', {
+    attrs: {
+      "justify": "space-around"
+    }
+  }, [_c('v-card', {
+    attrs: {
+      "width": "100%"
+    }
+  })], 1)], 1)], 1)], 1)], 1)
 },staticRenderFns: []}
 
 /***/ }),
@@ -1350,4 +1342,4 @@ module.exports = {"type":"FeatureCollection","features":[{"type":"Feature","prop
 /***/ })
 
 },[414]);
-//# sourceMappingURL=app.b0cbe0610269c5084c02.js.map
+//# sourceMappingURL=app.3a8648a0b90d0abdb61f.js.map

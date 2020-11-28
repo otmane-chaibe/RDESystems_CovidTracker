@@ -34,17 +34,6 @@ export default {
         }
       }
     },
-    // methods:{
-    //   update(){
-    //   this.$data._chart.destroy()
-     
-    //   this.renderChart(this.data, this.options);}
-    // },
-  // computed: {
-  //   chartData: function() {
-  //     return this.data;
-  //   }
-  // },
   watch: {
     data: function() {
       this.$data._chart.destroy()
