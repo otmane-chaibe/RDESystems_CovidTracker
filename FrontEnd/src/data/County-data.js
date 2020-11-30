@@ -1,0 +1,106 @@
+export var Countydata = [
+  {
+    ID:"0500000US34017",
+      NAME: 'Hudson',
+      STATE: "New Jersey",
+      RECOVERIES:21342,
+      CONFIRMEDCASES: 	
+      21342,
+      CONFIRMEDDEATHS: 34
+      
+    
+   },{
+    ID:"0500000US36005",
+      NAME: '5 Boroughs',
+      STATE: "New York",
+      RECOVERIES:21342,
+      CONFIRMEDCASES: 	
+      21342,
+      CONFIRMEDDEATHS: 34
+      
+    
+   },
+   {
+    ID:"0500000US34003",
+    NAME: 'Bergen',
+    STATE: "New Jersey",
+    RECOVERIES:4,
+    CONFIRMEDCASES: 23415,
+    CONFIRMEDDEATHS: 34,
+    
+  
+ },
+ {
+  ID:"0500000US34019",  
+  NAME: 'Hunterdon',
+  STATE: "New Jersey",
+  RECOVERIES:21342,
+  CONFIRMEDCASES: 1505,
+  CONFIRMEDDEATHS: 34,
+ 
+  
+
+},
+{
+  ID:"0500000US34025",  
+  NAME: 'Monmouth',
+  STATE: "New Jersey",
+  RECOVERIES:30000,
+  CONFIRMEDCASES: 12903,
+  CONFIRMEDDEATHS: 34,
+ 
+  
+
+},
+{
+  ID:"0500000US34023",
+  NAME: 'MIDdlesex',
+  STATE: "New Jersey",
+  RECOVERIES:4,
+  CONFIRMEDCASES: 20563,
+  CONFIRMEDDEATHS: 34,
+ 
+
+},
+{
+  ID:"0500000US34027",  
+  NAME: 'Morris',
+  STATE: "New Jersey",
+  RECOVERIES:100,
+  CONFIRMEDCASES: 8298,
+  CONFIRMEDDEATHS: 34,
+ 
+
+},
+{
+  ID:"0500000US34037", 
+  NAME: 'Sussex',
+  STATE: "New Jersey",
+  RECOVERIES:1,
+  CONFIRMEDCASES: 1615,
+  CONFIRMEDDEATHS: 34,
+ 
+
+},
+{
+  ID:"0500000US34013",  
+  NAME: 'Essex',
+  STATE: "New Jersey",
+  RECOVERIES:400,
+  CONFIRMEDCASES: 21989,
+  CONFIRMEDDEATHS: 34,
+  
+
+},
+{
+  ID:"0500000US34035",  
+  NAME: 'Somerset',
+  STATE: "New Jersey",
+  RECOVERIES:3000,
+  CONFIRMEDCASES: 6092,
+  CONFIRMEDDEATHS: 34,
+ 
+  
+
+}
+]

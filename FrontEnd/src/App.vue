@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <loading-screen :is-loading="isLoading"></loading-screen>
-    
+   <div class="sticky"> 
     <b-navbar variant="" type="light">
       <b-navbar-brand href="#">
         <img src="../static/RDE-logo.png" alt="rdelogo" />
@@ -9,7 +9,7 @@
       <v-md-date-range-picker class="glyphicon glyphicon-calendar mx-auto date" @change="requestData"></v-md-date-range-picker>
     </b-navbar>
     <br />
-    
+    </div>
 
   
   <div  style="background-color:#F6F6F6;">
@@ -42,7 +42,7 @@
 
     <l-map
       :center="[41.818716, -74.184204]"
-      :zoom="6"
+      :zoom="7"
       style="height: 550px;z-index:1"
       :options="mapOptions"
     >
@@ -52,7 +52,7 @@
         titleKey="NAME"
         idKey="NAME"
         :value="value"
-        geojsonIdKey="Name"
+        geojsonIdKey="NAME"
         :geojson="Tristate"
         :colorScale="colorScale"
       >
@@ -74,9 +74,44 @@
       </l-choropleth-layer>      
     </l-map>
   </div>
-
+<v-container>
+<v-layout>
+  
+    <v-flex xs4  style="padding:5px;">
+      <v-card class="primary" height="100%" >
+        <v-card-text><div>
+                  <div class="font-weight-normal">
+                    <strong style="color:#ffc107;">Total Confirmed Cases</strong> 
+                  </div>
+                  <div>{{ConfirmedCases}}</div>
+                </div></v-card-text>
+      </v-card>
+    </v-flex>
+    <v-flex xs4 style="padding:5px;">
+      <v-card class="primary" height="100%">
+        <v-card-text><div>
+                  <div>
+                    <strong style="color:#28a745;">Total Recoveries</strong> 
+                  </div>
+                  <div>{{Recovery}}</div>
+                </div></v-card-text>
+      </v-card>
+    </v-flex>
+    <v-flex xs4  style="padding:5px;">
+      <v-card  height="100%">
+        <v-card-text><div>
+                  <div class="font-weight-normal">
+                    <strong style="color:#dc3545;">Total Deaths</strong> 
+                  </div>
+                  <div>{{Deaths}}</div>
+                </div></v-card-text>
+      </v-card>
+    </v-flex>
+  </v-layout>
+</v-container>
+    
 <v-app id="inspire">
-    <v-container>
+    <!-- <v-container>
       <v-row justify="space-around">
         <v-card width="100%" >
          
@@ -121,7 +156,7 @@
           </v-card-text>
         </v-card>
       </v-row>
-    </v-container>
+    </v-container> -->
   
     <br />
     
@@ -182,10 +217,11 @@
     <pie-chart :data="chartData" v-if="showCharts===true"></pie-chart>
     <br>
 
-  <div class="date-container">Start:  {{ beginDate }} End: {{ endDate }}
+  <div class="date-container">
     <v-container>
       <v-row justify="space-around">
-        <v-card width=100%>
+        <v-card width=300px>
+          <strong>Start:  {{ beginDate }} End: {{ endDate }}</strong>
         </v-card>
       </v-row>
     </v-container>
@@ -211,6 +247,7 @@ Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 
 import Tristate from "./data/Tristate.json";
+import { geojson } from "./data/geojson";
 import { LMap } from "vue2-leaflet";
 import BarChart from "./components/BarChart";
 
@@ -222,9 +259,10 @@ var endDate = ""
 
 var amountArray=[];
 var Countydata=[];
+
 Vue.filter("pluck", function (objects, key) {
   
-  objects.map(function (object, index) {
+  objects.filter(function (object, index) {
     amountArray[index]=object[key];
   });
   
@@ -393,7 +431,7 @@ export default {
           var scrap='{"date":"'+today+'"}';
         }
         const url = 'https://d4y3kom4hxs3x.cloudfront.net/rest/controller/APIroutes/stats';
-  
+        console.log("this is the API",process.env.COLDFUSION_API);
   const options = {
     'method': 'POST',
     'Content-Type': 'application/json',
@@ -425,7 +463,7 @@ export default {
   }
   
 }
-this.Tristate=Tristate;
+
 this.changeData();
      setTimeout(() => {
       this.isLoading = false
@@ -445,13 +483,13 @@ this.changeData();
       this.showCharts=true
     },
     applyStyle(entry){
-if(entry=="CONFIRMEDCASES"){
-  return "warning";
-}if(entry=="RECOVERIES"){
-  return "success";
-}if(entry=="CONFIRMEDDEATHS"){
-  return "danger";
-}
+      if(entry=="CONFIRMEDCASES"){
+        return "warning";
+      }if(entry=="RECOVERIES"){
+        return "success";
+      }if(entry=="CONFIRMEDDEATHS"){
+        return "danger";
+      }
     },
     addTag(newTag) {
       
@@ -526,10 +564,19 @@ if(entry=="CONFIRMEDCASES"){
   
         
   },
-  
+  watch:{
+    Countydata:(newData,oldDate)=>{
+      this.Countydata=newData;
+    },
+    Tristate:(newData,oldDate)=>{
+      this.Tristate=newData;
+    },
+
+  },
 
   computed: {
    propertyComputed() {
+      
       return this.Countydata;
       
     }
@@ -602,8 +649,20 @@ button {
     width: 500px;
     text-align:center;
    
-    margin-top: 1px;
+    /* margin-top: 1px; */
 
 }
-
+div.sticky {
+  position: -webkit-sticky;
+  position:sticky;
+  top: 0;
+  height: 80px;
+  /* float: left; */
+  padding-bottom: 0px;
+  font-size: 20px;
+  background-color: #F6F6F6;
+  z-index: 10;
+  /* margin-left: 50px; */
+  
+}
 </style>
