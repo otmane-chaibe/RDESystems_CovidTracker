@@ -171,9 +171,10 @@
         <v-spacer></v-spacer>
         
       </v-card-title>
+      <v-btn @click="createPDF" color="primary" v-if="showTable===true">Download as PDF</v-btn>
       <!-- if no option selected in the multiselect 
       return all the data  -->
-      <v-data-table v-if="multiselectValueArray.length===0 && showTable===true"
+      <v-data-table ref="myTable" v-if="multiselectValueArray.length===0 && showTable===true"
         :data="Countydata"
         :headers="headers"
         :items="Countydata"
@@ -183,7 +184,7 @@
       ></v-data-table>
       <!-- if one or more option selected in the multiselect 
       return the filtered data in multiselectValueArray  -->
-      <v-data-table v-if="multiselectValueArray.length>0 && showTable===true"
+      <v-data-table ref="myTable" v-if="multiselectValueArray.length>0 && showTable===true"
         :data="multiselectValueArray"
         :headers="headers"
         :items="multiselectValueArray"
@@ -255,7 +256,8 @@ import BarChart from "./components/BarChart";
 import PieChart from "@/components/PieChart";
 import Loader from "./components/Loader";
 import  *  as funcs from "./functions.js";
-
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 // variables intialization
 var beginDate = "";
 var endDate = "";
@@ -351,6 +353,7 @@ export default {
         { text: "Recoveries", value: "RECOVERIES" },
         { text: "Confirmed Deaths", value: "CONFIRMEDDEATHS" },
       ],
+     
       /*this is the data injected in the chart*/
       chartData: {
         labels: chartlabelArr,
@@ -616,7 +619,31 @@ this.isLoading = false
       }
     
      
-    }
+    },
+    /**
+   * export table as a PDF
+   * 
+  */
+     createPDF () {
+            var source =  this.$refs["myTable"];
+            let rows = [];
+            let columnHeader = ["County","State","Confirmed Cases","Recoveries","Confirmed Deaths"];
+            let pdfName = 'CovidData-'+this.beginDate+'-'+this.endDate;
+            source.items.forEach(element => {
+                var temp = [
+                    element.NAME,
+                    element.STATE  ,
+                    element.CONFIRMEDCASES ,
+                    element.RECOVERIES ,
+                    element.CONFIRMEDDEATHS ,
+                ];
+                rows.push(temp);
+                
+            });
+            var doc = new jsPDF();
+            doc.autoTable(columnHeader, rows, { startY: 10 });
+            doc.save(pdfName + '.pdf');
+        }
   
         
   },
