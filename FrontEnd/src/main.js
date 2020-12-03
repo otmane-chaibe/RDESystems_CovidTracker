@@ -6,7 +6,7 @@ import App from './App'
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
 import VMdDateRangePicker from "v-md-date-range-picker";
-
+import "leaflet/dist/leaflet.css";
 Vue.use(VMdDateRangePicker);
 
 

@@ -4,9 +4,9 @@ const { reactiveProp } = mixins;
 export default {
     mixins: [reactiveProp],
     extends: Bar,
-    props: ['data'],
+    props: ['chartData'],
     mounted() {
-      this.renderChart(this.data, this.options)
+      this.renderChart(this.chartData, this.options)
     },
     data() {
       return {
@@ -38,7 +38,7 @@ export default {
     data: function() {
       this.$data._chart.destroy()
      
-      this.renderChart(this.data, this.options);
+      this.renderChart(this.chartData, this.options);
      
     }
   },

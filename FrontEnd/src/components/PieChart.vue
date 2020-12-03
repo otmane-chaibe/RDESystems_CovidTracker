@@ -4,7 +4,7 @@ const { reactiveProp } = mixins;
 export default {
     mixins: [reactiveProp],
     extends: Pie,
-    props: ['data'],
+    props: ['chartData'],
     data () {
       return {
         
@@ -18,13 +18,13 @@ export default {
       }
     },
     mounted () {
-      this.renderChart(this.data, this.options)
+      this.renderChart(this.chartData, this.options)
     },
   watch: {
     data: function() {
       this.$data._chart.destroy()
      
-      this.renderChart(this.data, this.options);
+      this.renderChart(this.chartData, this.options);
      
     }
   },

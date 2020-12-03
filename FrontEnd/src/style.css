@@ -1,0 +1,68 @@
+body {
+
+background-color: #ffffff;
+margin-left: 100px;
+margin-right: 100px;
+}
+.loading-message color white #map {
+background-color: #eee;
+}
+
+button {
+
+border: none;
+
+padding: 10px;
+margin: 5px;
+}
+
+.block-buttons {
+    position: relative;
+}
+.block-buttons .btn-group {
+    width: 100%;
+}
+
+.block-buttons button  {
+    width: 50%;
+}
+* {
+box-sizing: border-box;
+}
+
+.custom {
+    width: 170px !important;
+    align-self:center;
+}
+.date{
+
+    background-color:white;
+    
+    color: inherit;
+    border-radius: 4px;
+    width: 500px;
+    text-align:center;
+    
+    /* margin-top: 1px; */
+
+}
+.btn-state{
+background-color:grey;
+color:white;
+}
+.active{
+background-color:red;
+color:white;
+}
+div.sticky {
+position: -webkit-sticky;
+position:sticky;
+top: 0;
+height: 80px;
+
+padding-bottom: 0px;
+font-size: 20px;
+background-color: #F6F6F6;
+z-index: 10;
+
+}
