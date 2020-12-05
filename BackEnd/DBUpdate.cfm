@@ -16,7 +16,7 @@
 <cfset startString = cfhttp.filecontent>
 <cfset startTag = FindNoCase('deaths', startString)+6>
 <cfset finalString = RemoveChars(startString,1, startTag)>
-<cfset triStateArea = "36103, 36059, 34023, 34025, 34029, 34035, 34013, 34039, 34027, 34037, 34019, 42103, 36087, 36079, 34031, 34017, 34003, 36119">
+<cfset triStateArea = "36103, 36059, 34023, 34025, 34029, 34035, 34013, 34039, 34027, 34037, 34019, 42103, 36087, 36079, 34031, 34017, 34003, 36119, 09001, 09009, 34021, 09005, 36111, 42089, 36027, 36071">
 <cfset countiesInDB = "">
 <cfset csvData = listToArray(finalString,"#Chr(10)#",false,true)>
 <cfloop array = #csvData# index="ListItem">
@@ -27,7 +27,11 @@
 	<cfif temp[2] neq "Unknown">
 		<!---	if fips of current row is in the tri state area	--->
 		<cfif #ListContains(triStateArea,temp[4])# || temp[2] eq "New York City">
-		<cfset stateCounty = temp[3] & ":" & temp[2]>
+			<cfif temp[2] eq "New York City">
+				<cfset stateCounty = temp[3] & ":" & temp[2] & ":33061">
+			<cfelse>
+				<cfset stateCounty = temp[3] & ":" & temp[2] & ":" & temp[4]>
+			</cfif>
 			<!---	if county has been added to the database already	--->
 			<cfif 0 eq #ListContains(countiesInDB,stateCounty)#>
 				<cfif IsDefined("countyInsert")>
@@ -125,7 +129,12 @@
 	<cfif temp[2] neq "Unknown">
 		<!---	if state of current row is in the tri state area	--->
 		<cfif #ListContains(triStateArea,temp[4])# || temp[2] eq "New York City">
-			<cfset stateCounty = temp[3] & ":" & temp[2]>
+			<cfif temp[2] eq "New York City">
+				<cfset stateCounty = temp[3] & ":" & temp[2] & ":33061">
+			<cfelse>
+				<cfset stateCounty = temp[3] & ":" & temp[2] & ":" & temp[4]>
+			</cfif>
+			
 			<!---	get county id	--->
 			<cfquery datasource="covid-database" name=countyID>
 				SELECT id FROM Counties WHERE Name ="#stateCounty#";
@@ -191,3 +200,4 @@
 </cfquery>
 			
 <cfoutput>end</cfoutput>
+
