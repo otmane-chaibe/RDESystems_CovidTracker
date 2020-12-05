@@ -30,7 +30,7 @@
 		
 	<cfset data = []>
 	<cfquery datasource="covid-database" name ="stats">
-		select Co.Name as name, Ca.Date as d, Ca.Count as cases, D.Count as deaths, R.Count as recoveries FROM Cases Ca
+		select Co.Name as name, Co.ID, Ca.Date as d, Ca.Count as cases, D.Count as deaths, R.Count as recoveries FROM Cases Ca
 		JOIN Deaths D
 		  ON Ca.CountyID = D.CountyID AND Ca.Date = D.Date
 		JOIN Recoveries R
@@ -78,8 +78,10 @@
 				row = {
 				  BeginDate:"#structform.range[1]#",
 				  EndDate:"#structform.range[2]#",
+				  ID:"#beginDate.ID#",
 				  State: "#stateCounty[1]#",
 				  Name: "#stateCounty[2]#",
+				  Fips:"#stateCounty[3]#",
 				  Recoveries: int(eRecoveries - bRecoveries),
 				  ConfirmedCases: int(eCases - bCases),
 				  ConfirmedDeaths: int(eDeaths - bDeaths)
@@ -93,8 +95,10 @@
 			stateCounty=listToArray(stats.name[i],":",false,true);
 			row = {
 			  Date:"#stats.d[i]#",
+			  ID:"#stats.ID[i]#",
 			  State: "#stateCounty[1]#",
 			  Name: "#stateCounty[2]#",
+			  Fips:"#stateCounty[3]#",
 			  Recoveries: #stats.recoveries[i]#,
 			  ConfirmedCases: #stats.cases[i]#,
 			  ConfirmedDeaths: #stats.deaths[i]#
