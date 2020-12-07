@@ -64,11 +64,14 @@
       value is the current filter
       GEO_ID is the id for each county in Tristate.json -->
     <l-map
-      :center="[41.818716, -74.184204]"
-      :zoom="6"
+      :center="[41.158677, -73.925918]"
+      :zoom="7"
       style="height: 550px;z-index:1"
       :options="mapOptions"
     >
+    <!-- Choropleth layer does not work properly with more than 24 geojson features
+    so i made two choropleth layers the second one has all the geojson to get each feature County name
+    while the first one has the 24 geojson features that should be colored-->
       <l-choropleth-layer 
  
         :data="propertyComputed"
@@ -78,14 +81,20 @@
         geojsonIdKey="GEO_ID"
         :geojson="Tristate"
         :colorScale="colorScale"
+      > 
+      </l-choropleth-layer>      
+      <l-choropleth-layer 
+ 
+        :data="propertyComputed"
+        titleKey="NAME"
+        idKey="FIPS"
+        :value="value"
+        geojsonIdKey="GEO_ID"
+        :geojson="Tristate1"
+        :colorScale="colorScale"
       >
+      
         <template slot-scope="props">
-          <l-info-control
-            :item="props.currentItem"
-            :unit="props.unit"
-            title="County"
-            placeholder="Hover over a County"
-          />
           <l-reference-chart
             title="Covid-19 Dashboard"
             :colorScale="colorScale"
@@ -93,8 +102,14 @@
             :max="props.max"
             position="topright"
           />
+          <l-info-control
+            :item="props.currentItem"
+            :unit="props.unit"
+            title="County"
+            placeholder="Hover over a County"
+          />
         </template>
-      </l-choropleth-layer>      
+      </l-choropleth-layer> 
     </l-map>
   </div>
 <v-container>
@@ -198,7 +213,7 @@
     the buttons below control 
     please refer to the methods below 
     to understand what changeState does -->
-    <v-card  height="50%" v-if="showCharts===true">
+    <v-card   v-if="showCharts===true">
         <v-card-text>Select a State:</v-card-text>
                 <div id="toolBtns">
 <div class="btn-group" role="group" id="toolBtns" >
@@ -207,17 +222,18 @@
   <button class="btn-state" type="button" @click="activeBtn = 'btn3';changeState('Connecticut',filter)" :class="{active: activeBtn === 'btn3' }">Connecticut</button>
   <button class="btn-state" type="button" @click="activeBtn = 'btn4';changeState('Pennsylvania',filter)" :class="{active: activeBtn === 'btn4' }">Pennsylvania</button></div>
 </div>
+ 
       </v-card>
-  
-    <legend class="typo__label" style="text-align: center" v-if="showCharts===true">Bar Chart</legend>
+<legend class="typo__label" style="text-align: center" v-if="showCharts===true">Bar Chart</legend>
     <bar-chart v-if="showCharts===true" :chartData="chartData"></bar-chart>
 
     
 
     <br /><br />
     <legend class="typo__label" style="text-align: center" v-if="showCharts===true">Pie Chart</legend>
-    <pie-chart :chartData="chartData" v-if="showCharts===true"></pie-chart>
-    <br>
+    <pie-chart :chartData="chartData" v-if="showCharts===true"></pie-chart>  
+   
+    
 <!-- this is the date displayed at the buttom  -->
   <div class="date-container">
     <v-container>
@@ -248,7 +264,7 @@ import Multiselect from "vue-multiselect";
 Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin);
-
+import Tristate1 from "./data/Tristate-1.json";
 import Tristate from "./data/Tristate.json";
 import { LMap } from "vue2-leaflet";
 import {colors} from "./chartColors"
@@ -258,6 +274,8 @@ import Loader from "./components/Loader";
 import  *  as funcs from "./functions.js";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+
+
 // variables intialization
 var beginDate = "";
 var endDate = "";
@@ -312,7 +330,7 @@ export default {
   data() {
 
     return {
-      
+      Tristate1,
       State:'',
       activeBtn:'btn1',
       isLoading: true,
@@ -369,14 +387,14 @@ export default {
         ]
       },
       mapOptions: {
-        attributionControl: true,
+       // attributionControl: true,
       },
       currentStrokeColor: "3d3213",
     };
   },
   mounted () {
     this.requestData();
-
+    
   },
   methods: {
      /**
@@ -421,7 +439,6 @@ export default {
   }
   /*set the backend URL and post data */
   const url = 'https://d4y3kom4hxs3x.cloudfront.net/rest/controller/APIroutes/stats';
-  console.log("this is the API",process.env.VUE_APP_COLDFUSION_API);
   const options = {
   'method': 'POST',
   'Content-Type': 'application/json',
@@ -643,7 +660,13 @@ this.isLoading = false
             var doc = new jsPDF();
             doc.autoTable(columnHeader, rows, { startY: 10 });
             doc.save(pdfName + '.pdf');
-        }
+        },
+      concatGeoJSON(g1, g2){
+          return { 
+              "type" : "FeatureCollection",
+              "features": g1.features.concat(g2.features)
+          }
+      }
   
         
   },
@@ -656,7 +679,7 @@ this.isLoading = false
   computed: {
    propertyComputed() {
       return this.Countydata;
-    }
+  }
     
   }
 };
