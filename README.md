@@ -15,6 +15,7 @@ VueJS
 LeafletJS  
 ChartJS  
 GeoJSON  
+AWS
   
 ## Back End Developer:  
 ### Michael Damiano  
